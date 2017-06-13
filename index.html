@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <meta charset="utf-8"/>
+        <title>Startpage</title>
+        <link rel="stylesheet" href="index.css"></link>
+        
+    </head>
+    <body>
+
+        <div id="bg"></div>
+
+        <div id="search-container">
+            <input id="search-box" type="search" class="searchbox" onkeypress="checkCommandsKeyPress(event)" onkeydown="checkCommandsKeyDown(event)" onkeyup="checkCommandsKeyUp(event)"></input>
+        </div>
+
+        <div id="notes-container">
+            <textarea id="notes" onkeypress="notesKeyPress(event)"></textarea>
+        </div>
+
+        <div id="display-container"></div>
+
+        <script type="text/javascript" src="js/crypto-js-aes.js"></script>
+        <script type="text/javascript" src="js/info.js"></script>
+        <script type="text/javascript" src="js/script.js"></script>
+    </body>
+</html>
