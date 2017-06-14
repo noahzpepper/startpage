@@ -1,14 +1,14 @@
-#startpage
+# startpage
 
 *A customizable, minimalist startpage with a notepad and shortcuts.*
 
-###basics
+### basics
 
 The startpage opens to an empty text field. Typing into the search field and pressing Enter will search Google for the typed text. 
 
 In addition to searching the web, many commands into the text field that cause different behaviors. Slash commands provide features to the startpage and allow the user to customize it. Shortcut commands link keywords to links, and allow users to jump from the startpage directly to their favorite sites.
 
-###slash commands
+### slash commands
 
 Slash commands begin with a `/` and cannot be modified. A full list of slash commands is shown below:
 
@@ -22,7 +22,7 @@ Slash commands begin with a `/` and cannot be modified. A full list of slash com
 
 For detailed explanations of these commands, run `/help <command name>`.
 
-###shortcut commands
+### shortcut commands
 
 Shortcut commands link a keyword to a website, and can be edited by the user. A full list of shortcut commands can be found with `/help`, but the default set is shown below:
 
@@ -33,11 +33,11 @@ Shortcut commands link a keyword to a website, and can be edited by the user. A 
 |wikipedia|[Wikipedia](https://www.wikipedia.org)|
 |youtube|[YouTube](https://youtube.com)|
 
-Other sets of commands, such as the Google suite, entertainment suite, and educational suite, can be added as well.
+Other sets of commands, such as the Google suite, entertainment suite, and educational suite, can be added. As of now, they start included, but I won't list them in the list (there are too many).
 
 For detailed explanations of these commands, run `/help <command name>`.
 
-###about
+### about
 
 Email: [noahzpepper@berkeley.edu](mailto:noahzpepper@berkeley.edu)
 

@@ -94,6 +94,7 @@ function checkCommandsKeyPress(e) {
 		parseCommand(box.value, modifier, false);
 	} else if (e.keyCode == 27) { //escape key
 		box.focus();
+		box.value = "";
 		setActiveContainer(null);
 	}
 }
