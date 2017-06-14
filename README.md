@@ -10,6 +10,7 @@ Commands begin with a `/` and cannot be modified. A full list of commands is sho
 
 |command|action|
 |---|---|
+|`/alias`|Link a shortcut to another shortcut|
 |`/delete`|Delete a shortcut|
 |`/edit`|Edit a shortcut|
 |`/export`|Export startpage settings to text|
@@ -17,6 +18,7 @@ Commands begin with a `/` and cannot be modified. A full list of commands is sho
 |`/hide`, `<ESC>`|Hide any displayed text|
 |`/import`|Import startpage settings from text|
 |`/notes`|Display notepad|
+|`/reset`|Reset startpage settings to default state|
 
 For detailed explanations of these commands, run `/help <command name>`.
 

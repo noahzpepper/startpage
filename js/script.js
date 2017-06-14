@@ -4,8 +4,6 @@ Startpage.
 
 Still working on:
 
--Users can add own commands
--Better localstorage handling
 -Code as clean as possible
 
 */
@@ -18,10 +16,7 @@ const NOTES_ERROR_TEXT = "Uh-oh! It seems your browser doesn't support local sto
 						 "when you close or navigate away from this page. You can still write notes here, they just won't save.";
 const IMPORT_ERROR_TEXT = "Error while importing.";
 const EXPORT_ERROR_TEXT = "Error while exporting.";
-const HELP_TEXT = "HELP MANUAL<br><br>Valid commands will highlight red in the search bar<br>" +
-	"Type /help [command] for details of a specific command<br><br>Command list<br><br>" + getAllCommands() + 
-	"<br><br>Hold Shift to force Google search<br>Hold Option to force Google \"I'm Feeling Lucky\" search" + 
-	"<br>Search multiple commands at once using a semicolon to separate them";
+const ERROR_TEXT = "An error occurred.";
 
 var highlightColor = 'firebrick';
 
@@ -54,19 +49,29 @@ function setDisplayContainerContents(contents){
 	display_container.innerHTML = contents;
 }
 
-function getAllCommands(){
+function getHelpText(){
 	var allcs = [];
 	for (var i=0; i<commands.length; i++){
-		allcs.push(commands[i].name);
+		allcs.push(((commands[i].alias != null) ? "<em>" : "") + commands[i].name + ((commands[i].alias != null) ? "</em>" : ""));
 	}
-	return allcs.sort().join(", ");
+	sorted = allcs.sort().join(", ");
+	return "HELP MANUAL<br><br>Valid commands will highlight red in the search bar<br>" +
+	"Type /help [command] for details of a specific command<br><br>Command list (aliases are italicized)<br><br>" + sorted + 
+	"<br><br>Hold Shift to force Google search<br>Hold Option to force Google \"I'm Feeling Lucky\" search" + 
+	"<br>Search multiple commands at once using a semicolon to separate them";
 }
 
 function getHelp(c){
 	//c is a dictionary representation of a command
-	return "HELP MANUAL<br><br>NAME<br>&emsp;&emsp;" + c.name + " - " + c.desc + "<br><br>COMMANDS<br>&emsp;&emsp;" +
-		c.cmd.join(", ") + ((c.url != null) ? ("<br><br>OPEN<br>&emsp;&emsp;" + c.url) : "") + 
-		((c.search != null) ? ("<br><br>SEARCH<br>&emsp;&emsp;" + c.url+c.search) : "");
+	if (c.iscmd != null) {
+		return c.iscmd;
+	}
+	if (c.alias != null) {
+		return "HELP MANUAL<br><br>SHORTCUT<br>&emsp;&emsp;&emsp;&emsp;" + c.name + "<br><br>ALIAS TO<br>&emsp;&emsp;&emsp;&emsp;" +c.alias;
+	}
+	return "HELP MANUAL<br><br>SHORTCUT<br>&emsp;&emsp;&emsp;&emsp;" + c.name + "<br><br>OPEN<br>&emsp;&emsp;&emsp;&emsp;" +
+			((c.url != null) ? c.url : "(no open link)") + "<br><br>SEARCH<br>&emsp;&emsp;&emsp;&emsp;" + 
+			((c.search != null) ? c.search : "(no search link)");
 }
 
 // Navigates to an address
@@ -142,6 +147,7 @@ function notesKeyPress(e){
 // focus the search box on load, escape key works
 window.onload = function() {
 	box.focus();
+	box.value = "";
 	document.onkeypress = handleEscapeKey;
 };
 
@@ -181,18 +187,16 @@ function parseCommand(com, keydown, inNewTab) {
 				found_command = false;
 				if (comArg){
 					for (var i=0; i<commands.length; i++){
-						for (var j=0; j<commands[i].cmd.length; j++){
-							if (commands[i].cmd[j] == comArg){
-								found_command = true;
-								log(getHelp(commands[i]));
-							}
+						if (commands[i].name == comArg || commands[i].name.substring(1) == comArg) {
+							found_command = true;
+							log(getHelp(commands[i]));
 						}
 					}
 					if (!found_command){
-						log(HELP_TEXT);
+						log(getHelpText());
 					}
 				} else {
-					log(HELP_TEXT);
+					log(getHelpText());
 				}
 				break;
 			case "notes":
@@ -215,6 +219,89 @@ function parseCommand(com, keydown, inNewTab) {
 					log(IMPORT_ERROR_TEXT);
 				}
 				break;
+			case "alias":
+				if (comArray.length == 3) { //check that exactly 2 args
+					new_index = -1;
+					existing_index = -1;
+					for (var i=0; i < commands.length; i++) { //loop through commands
+						if (commands[i].name == comArray[1]) {
+							new_index = i;
+						}
+						if (commands[i].name == comArray[2]) {
+							existing_index = i;
+						}
+					}
+					if (existing_index == -1 || new_index == existing_index || (new_index > -1 && commands[new_index].alias == null) || commands[existing_index].alias != null || comArray[1].indexOf("/") > -1) {
+						log(ERROR_TEXT);
+					} else {
+						if (new_index == -1) {
+							commands.push({name: comArray[1], alias: comArray[2], url: null, search: commands[existing_index].search == null ? null : "", iscmd: null});
+						} else {
+							commands[new_index] = {name: comArray[1], alias: comArray[2], url: null, search: commands[existing_index].search == null ? null : "", iscmd: null};
+						}
+						refreshCommandList();
+						log("Updated alias. " + comArray[1] + " now points to " + comArray[2] + ".");
+						localStorage["commands"] = JSON.stringify(commands);
+					}
+				} else {
+					log(ERROR_TEXT);
+				}
+				break;
+			case "delete":
+				for (var i=0; i < commands.length; i++) {
+					if (commands[i].name == comArray[1] && commands[i].iscmd == null) {
+						commands.splice(i, 1);
+						refreshCommandList();
+						log("Deleted " + comArray[1] + ". This cannot be undone.");
+						localStorage["commands"] = JSON.stringify(commands);
+						break;
+					}
+				}
+				log(ERROR_TEXT);
+				break;
+			case "edit":
+				if (comArray.length < 4) {
+					log(ERROR_TEXT);
+					break;
+				}
+				url = null;
+				search = null;
+				if (comArray[2] == "-o") {
+					url = comArray[3];
+				} else if (comArray[2] == "-s") {
+					search = comArray[3];
+				}
+				if (comArray.length > 5) {
+					if (comArray[4] == "-o") {
+						url = comArray[5];
+					} else if (comArray[4] == "-s") {
+						search = comArray[5];
+					}
+				}
+				if (url == null && search == null) {
+					log(ERROR_TEXT);
+					break;
+				}
+				index = -1;
+				for (var i=0; i < commands.length; i++) {
+					if (commands[i].name == comArray[1]) {
+						index = i;
+					}
+				}
+				if (index > -1) {
+					commands[index].url = url;
+					commands[index].search = search;
+				} else {
+					commands.push({name: comArray[1], alias: null, url: url, search: search, iscmd: null});
+				}
+				refreshCommandList();
+				log("Updated command information for " + comArray[1] + ".");
+				localStorage["commands"] = JSON.stringify(commands);
+				break;
+			case "reset":
+				if (confirm("Are you sure you want to reset the startpage to the default state?\nYou will lose ALL custom shortcuts, aliases, and notes.\nExporting your save data before resetting is highly recommended.")) {
+					localStorage.clear();
+				}
 			default:
 				log(HELP_INFO_TEXT);
 		}
@@ -223,16 +310,19 @@ function parseCommand(com, keydown, inNewTab) {
 	//if it doesn't start with a / then run a search
 	else {
 		var args = com.split(" ");
+		comName = args[0];
+		comArg = args.slice(1, args.length).join(" ");
 		for (var i=0; i<commands.length; i++){
-			for (var j=0; j<commands[i].cmd.length; j++){
-				if (commands[i].cmd[j] == args[0]){
-					if (args.length > 1 && commands[i].search != null){
-						nav(commands[i].url+commands[i].search+args.slice(1, args.length).join(" "), inNewTab);
-						return;
-					} else if (args.length <= 1) {
-						nav(commands[i].url, inNewTab);
-						return;
-					}
+			if (commands[i].name == args[0]){
+				if (commands[i].alias != null) {
+					parseCommand(commands[i].alias + (args.length > 1 ? (" " + comArg) : ""), keydown, inNewTab);
+					return;
+				} else if (args.length > 1 && commands[i].search != null){
+					nav(commands[i].search + comArg, inNewTab);
+					return;
+				} else if (args.length <= 1) {
+					nav(commands[i].url, inNewTab);
+					return;
 				}
 			}
 		}
@@ -275,16 +365,15 @@ updateNotes();
 
 function export_storage(password){
 	export_string = JSON.stringify(localStorage);
-	console.log(password);
 	if (!password) {
-		password = "public";
+		password = "";
 	}
 	return CryptoJS.AES.encrypt(export_string, password);
 }
 
 function import_storage(encrypted, password){
 	if (!password) {
-		password = "public";
+		password = "";
 	}
 	decrypted = CryptoJS.AES.decrypt(encrypted, password);
 	try {
@@ -299,6 +388,10 @@ function import_storage(encrypted, password){
 		return false;
 	}
 }
+
+/* The below functions came from StackOverflow:
+		https://stackoverflow.com/questions/6121203/how-to-do-fade-in-and-fade-out-with-javascript-and-css
+*/
 
 function fade(element) {
 	var op = 1;  // initial opacity
