@@ -2,45 +2,26 @@
 
 *A customizable, minimalist startpage with a notepad and shortcuts.*
 
-### basics
+![](img/startpage.png)
 
-The startpage opens to an empty text field. Typing into the search field and pressing Enter will search Google for the typed text. 
+### commands
 
-In addition to searching the web, many commands into the text field that cause different behaviors. Slash commands provide features to the startpage and allow the user to customize it. Shortcut commands link keywords to links, and allow users to jump from the startpage directly to their favorite sites.
-
-### slash commands
-
-Slash commands begin with a `/` and cannot be modified. A full list of slash commands is shown below:
+Commands begin with a `/` and cannot be modified. A full list of commands is shown below:
 
 |command|action|
 |---|---|
-|`/export`|Export startpage settings as text|
-|`/help`|Show help|
+|`/delete`|Delete a shortcut|
+|`/edit`|Edit a shortcut|
+|`/export`|Export startpage settings to text|
+|`/help`|Display help pages|
 |`/hide`, `<ESC>`|Hide any displayed text|
 |`/import`|Import startpage settings from text|
-|`/notes`|Show notepad|
+|`/notes`|Display notepad|
 
 For detailed explanations of these commands, run `/help <command name>`.
 
-### shortcut commands
+### shortcuts
 
-Shortcut commands link a keyword to a website, and can be edited by the user. A full list of shortcut commands can be found with `/help`, but the default set is shown below:
+Shortcuts link a keyword to a website, and can be edited by the user. A full list of shortcuts can be found with `/help`. By default, 20 commands are included in the startpage.
 
-|command|website|
-|---|---|
-|amazon|[Amazon](https://smile.amazon.com)|
-|google|[Google](https://www.google.com)|
-|wikipedia|[Wikipedia](https://www.wikipedia.org)|
-|youtube|[YouTube](https://youtube.com)|
-
-Other sets of commands, such as the Google suite, entertainment suite, and educational suite, can be added. As of now, they start included, but I won't list them in the list (there are too many).
-
-For detailed explanations of these commands, run `/help <command name>`.
-
-### about
-
-Email: [noahzpepper@berkeley.edu](mailto:noahzpepper@berkeley.edu)
-
-This is a solo project developed in my spare time, so there are likely to be bugs. Please let me know if you find any problems in the startpage. I'm also open to suggestions for improvements or new features.
-
-Also, if you use it regularly, let me know! I'd love to hear that someone besides me finds it useful :)
+For detailed explanations of each shortcut, run `/help <shortcut name>`.
