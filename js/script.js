@@ -22,13 +22,13 @@ const EXPORT_ERROR_TEXT = "Error while exporting.";
 const ERROR_TEXT = "An error occurred.";
 
 const HOW_TO_USE_TEXT = "This is a startpage. Typing into the searchbar will search Google. You can also use shortcuts to " + 
-						"search other websites and quickly open links. Shown below are a few examples of searches:<br><br>" +
-						"<span style='color:firebrick'>amazon wireless headphones</span>: search Amazon for 'wireless headphones'<br>" +
-						"<span style='color:firebrick'>facebook</span>: open Facebook<br><span style='color:firebrick'>images beagle</span>: search Google Images for 'beagle'<br>" +
-						"<span style='color:firebrick'>youtube</span>: open Youtube<br><span style='color:firebrick'>youtube bruno mars</span>: search Youtube for 'bruno mars'<br><br>" +
-						"20 commands are built-in by default. See the full list of built-in shortcuts using <span style='color:firebrick'>/help</span>. " +
-						"You can also add your own using <span style='color:firebrick'>/edit</span>, <span style='color:firebrick'>/alias</span>, and <span style='color:firebrick'>/delete</span>.<br><br>" + 
-						"To exit a display, such as this one, use the Escape key, or type <span style='color:firebrick'>/hide</span>. You can always return to this introduction with <span style='color:firebrick'>/intro</span>.";
+						"quickly open and search other websites. Shown below are a few examples of searches:<br><br>" +
+						firebrickAString("amazon wireless headphones") + ": search Amazon for 'wireless headphones'<br>" +
+						firebrickAString("facebook") + ": open Facebook<br>" + firebrickAString("images beagle") + ": search Google Images for 'beagle'<br>" +
+						firebrickAString("youtube") + ": open Youtube<br>" + firebrickAString("youtube bruno mars") + ": search Youtube for 'bruno mars'<br><br>" +
+						"20 shortcuts are built-in by default. See the full list of using " + firebrickAString("/help") + ". " +
+						"You can also add your own using " + firebrickAString("/edit") + ", " + firebrickAString("/alias") + ", and " + firebrickAString("/delete") + ".<br><br>" + 
+						"To exit a display, such as this one, use the Escape key, or type " + firebrickAString("/hide") + ". You can always return to this introduction with " + firebrickAString("/intro") + ".";
 
 var highlightColor = 'firebrick';
 
@@ -40,6 +40,10 @@ var notes_container = document.getElementById("notes-container");
 var display_container = document.getElementById("display-container");
 var notes = document.getElementById("notes");
 var bg = document.getElementById("bg");
+
+function firebrickAString(str) {
+	return "<span style='color:firebrick'>" + str + "</span>";
+}
 
 function log(contents){
 	setActiveContainer(display_container);
@@ -67,7 +71,7 @@ function getHelpText(){
 		allcs.push(((commands[i].alias != null) ? "<em>" : "") + commands[i].name + ((commands[i].alias != null) ? "</em>" : ""));
 	}
 	sorted = allcs.sort().join(", ");
-	return "HELP MANUAL<br><br>Valid commands will highlight red in the search bar<br>" +
+	return "HELP MANUAL<br><br>Valid commands will highlight " + firebrickAString("red") + " in the search bar<br>" +
 	"Type /help [command] for details of a specific command<br><br>Command list (aliases are italicized)<br><br>" + sorted + 
 	"<br><br>Hold Shift to force Google search<br>Hold Option to force Google \"I'm Feeling Lucky\" search" + 
 	"<br>Search multiple commands at once using a semicolon to separate them";
