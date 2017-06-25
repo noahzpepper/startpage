@@ -2,6 +2,8 @@
 
 *A customizable, minimalist startpage with a notepad and shortcuts.*
 
+Confused about how to use it? Start with `/intro`.
+
 ![](img/startpage.png)
 
 ### commands
@@ -17,6 +19,7 @@ Commands begin with a `/` and cannot be modified. A full list of commands is sho
 |`/help`|Display help pages|
 |`/hide`, `<ESC>`|Hide any displayed text|
 |`/import`|Import startpage settings from text|
+|`/intro`|Display introduction for startpage|
 |`/notes`|Display notepad|
 |`/reset`|Reset startpage settings to default state|
 

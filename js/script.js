@@ -2,10 +2,13 @@
 
 Startpage.
 
-Still working on:
+Features to add?
 
--Code as clean as possible
-
+-Code as clean as possible, seriously clean up code
+-Timer
+-Calendar
+-Show the time on the screen
+-CSS updates?
 */
 
 const UPDATE_NOTES_TIMER = 3000; //3 seconds
@@ -17,6 +20,15 @@ const NOTES_ERROR_TEXT = "Uh-oh! It seems your browser doesn't support local sto
 const IMPORT_ERROR_TEXT = "Error while importing.";
 const EXPORT_ERROR_TEXT = "Error while exporting.";
 const ERROR_TEXT = "An error occurred.";
+
+const HOW_TO_USE_TEXT = "This is a startpage. Typing into the searchbar will search Google. You can also use shortcuts to " + 
+						"search other websites and quickly open links. Shown below are a few examples of searches:<br><br>" +
+						"<span style='color:firebrick'>amazon wireless headphones</span>: search Amazon for 'wireless headphones'<br>" +
+						"<span style='color:firebrick'>facebook</span>: open Facebook<br><span style='color:firebrick'>images beagle</span>: search Google Images for 'beagle'<br>" +
+						"<span style='color:firebrick'>youtube</span>: open Youtube<br><span style='color:firebrick'>youtube bruno mars</span>: search Youtube for 'bruno mars'<br><br>" +
+						"20 commands are built-in by default. See the full list of built-in shortcuts using <span style='color:firebrick'>/help</span>. " +
+						"You can also add your own using <span style='color:firebrick'>/edit</span>, <span style='color:firebrick'>/alias</span>, and <span style='color:firebrick'>/delete</span>.<br><br>" + 
+						"To exit a display, such as this one, use the Escape key, or type <span style='color:firebrick'>/hide</span>. You can always return to this introduction with <span style='color:firebrick'>/intro</span>.";
 
 var highlightColor = 'firebrick';
 
@@ -149,6 +161,9 @@ window.onload = function() {
 	box.focus();
 	box.value = "";
 	document.onkeypress = handleEscapeKey;
+	if (storageAvailable && localStorage["intro"] == null) {
+		box.placeholder = "/intro";
+	}
 };
 
 // parse the user's command
@@ -301,7 +316,15 @@ function parseCommand(com, keydown, inNewTab) {
 			case "reset":
 				if (confirm("Are you sure you want to reset the startpage to the default state?\nYou will lose ALL custom shortcuts, aliases, and notes.\nExporting your save data before resetting is highly recommended.")) {
 					localStorage.clear();
+					box.placeholder = "/intro";
+					box.style.color = "black";
 				}
+				break;
+			case "intro":
+				log(HOW_TO_USE_TEXT);
+				localStorage["intro"] = "seen";
+				box.placeholder = "";
+				break;
 			default:
 				log(HELP_INFO_TEXT);
 		}

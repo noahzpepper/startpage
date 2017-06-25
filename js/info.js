@@ -38,6 +38,9 @@ const import_text = "HELP MANUAL<br><br>COMMAND<br>&emsp;&emsp;&emsp;&emsp;/impo
 			"/import <u>text</u> [<u>password</u>]<br><br>DESCRIPTION<br>&emsp;&emsp;&emsp;&emsp;/import changes the global settings for the startpage " + 
 			"based on the given import <u>text</u>, provided from an export. Providing a <u>password</u> decrypts the data using that password."; 
 
+const intro_text = "HELP MANUAL<br><br>COMMAND<br>&emsp;&emsp;&emsp;&emsp;/intro - display introduction<br><br>USAGE<br>&emsp;&emsp;&emsp;&emsp;" +
+			"/intro<br><br>DESCRIPTION<br>&emsp;&emsp;&emsp;&emsp;/intro displays the introduction text for the startpage.";
+
 const reset_text = "HELP MANUAL<br><br>COMMAND<br>&emsp;&emsp;&emsp;&emsp;/reset - reset startpage settings to default<br><br>USAGE<br>&emsp;&emsp;&emsp;&emsp;" +
 			"/reset<br><br>DESCRIPTION<br>&emsp;&emsp;&emsp;&emsp;/reset resets the global settings for the startpage " + 
 			"to the default state. This cannot be undone, and it is highly recommended to export data using /export before resetting."; 
@@ -89,6 +92,7 @@ if (storageAvailable && localStorage["commands"] != null) {
 		{name: "/hide", alias: null, url: null, search: null, iscmd: hide_text},
 		{name: "/notes", alias: null, url: null, search: null, iscmd: notes_text},
 		{name: "/import", alias: null, url: null, search: null, iscmd: import_text},
+		{name: "/intro", alias: null, url: null, search: null, iscmd: intro_text},
 		{name: "/reset", alias: null, url: null, search: null, iscmd: reset_text}
 	];
 }
