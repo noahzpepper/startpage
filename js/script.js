@@ -2,24 +2,14 @@
 
 Startpage.
 
-Features to add?
-
--Code as clean as possible, seriously clean up code
--Timer
--Calendar
--Show the time on the screen
--CSS updates?
 */
 
 const UPDATE_NOTES_TIMER = 3000; //3 seconds
 
-const HELP_INFO_TEXT = "Type /help for a list of all commands.";
 const NOTES_DEFAULT_TEXT = "Your notes are saved as you write, so start writing!";
 const NOTES_ERROR_TEXT = "Uh-oh! It seems your browser doesn't support local storage, so unfortunately notes will not be saved " + 
 						 "when you close or navigate away from this page. You can still write notes here, they just won't save.";
-const IMPORT_ERROR_TEXT = "Error while importing.";
-const EXPORT_ERROR_TEXT = "Error while exporting.";
-const ERROR_TEXT = "An error occurred.";
+const ERROR_TEXT_TEMPLATE = firebrickAString("ERROR: ");
 
 const HOW_TO_USE_TEXT = "This is a startpage. Typing into the searchbar will search Google. You can also use shortcuts to " + 
 						"quickly open and search other websites. Shown below are a few examples of searches:<br><br>" +
@@ -48,6 +38,10 @@ function firebrickAString(str) {
 function log(contents){
 	setActiveContainer(display_container);
 	setDisplayContainerContents(contents);
+}
+
+function error_log(contents) {
+	log(ERROR_TEXT_TEMPLATE + contents);
 }
 
 function setActiveContainer(container){
@@ -228,14 +222,18 @@ function parseCommand(com, keydown, inNewTab) {
 				if (storageAvailable) {
 					log("Copy this text and save it somewhere safe:<br><br>" + export_storage(comArg));
 				} else {
-					log(EXPORT_ERROR_TEXT);
+					error_log("No local storage.");
 				}
 				break;
 			case "import":
-				if (storageAvailable && comArg && import_storage(comArray[1], comArray[2])) {
-					log("Successfully imported settings. Refresh for all changes to take effect.");
+				if (!storageAvailable) {
+					error_log("No local storage.");
+				} else if (!comArg) {
+					error_log("No import text provided.");
+				} else if (!import_storage(comArray[1], comArray[2])) {
+					error_log("Invalid import text.");
 				} else {
-					log(IMPORT_ERROR_TEXT);
+					log("Successfully imported settings. Refresh for all changes to take effect.");
 				}
 				break;
 			case "alias":
@@ -251,7 +249,7 @@ function parseCommand(com, keydown, inNewTab) {
 						}
 					}
 					if (existing_index == -1 || new_index == existing_index || (new_index > -1 && commands[new_index].alias == null) || commands[existing_index].alias != null || comArray[1].indexOf("/") > -1) {
-						log(ERROR_TEXT);
+						error_log("Commands provided to /alias did not exist or not allowed to alias.");
 					} else {
 						if (new_index == -1) {
 							commands.push({name: comArray[1], alias: comArray[2], url: null, search: commands[existing_index].search == null ? null : "", iscmd: null});
@@ -263,7 +261,7 @@ function parseCommand(com, keydown, inNewTab) {
 						localStorage["commands"] = JSON.stringify(commands);
 					}
 				} else {
-					log(ERROR_TEXT);
+					error_log("Did not provide correct number of arguments to /alias.");
 				}
 				break;
 			case "delete":
@@ -276,11 +274,11 @@ function parseCommand(com, keydown, inNewTab) {
 						break;
 					}
 				}
-				log(ERROR_TEXT);
+				error_log("Could not find command to delete.");
 				break;
 			case "edit":
 				if (comArray.length < 4) {
-					log(ERROR_TEXT);
+					error_log("Did not provide correct number of arguments to /edit.");
 					break;
 				}
 				url = null;
@@ -298,7 +296,7 @@ function parseCommand(com, keydown, inNewTab) {
 					}
 				}
 				if (url == null && search == null) {
-					log(ERROR_TEXT);
+					error_log("Did not provide correct arguments to /delete.");
 					break;
 				}
 				index = -1;
@@ -330,7 +328,7 @@ function parseCommand(com, keydown, inNewTab) {
 				box.placeholder = "";
 				break;
 			default:
-				log(HELP_INFO_TEXT);
+				error_log("Invalid command. Type /help for a list of all commands.");
 		}
 		box.value = "";
 	}
