@@ -16,7 +16,7 @@ const HOW_TO_USE_TEXT = "This is a startpage. Typing into the searchbar will sea
 						firebrickAString("amazon wireless headphones") + ": search Amazon for 'wireless headphones'<br>" +
 						firebrickAString("facebook") + ": open Facebook<br>" + firebrickAString("images beagle") + ": search Google Images for 'beagle'<br>" +
 						firebrickAString("youtube") + ": open Youtube<br>" + firebrickAString("youtube bruno mars") + ": search Youtube for 'bruno mars'<br><br>" +
-						"20 shortcuts are built-in by default. See the full list of using " + firebrickAString("/help") + ". " +
+						"20 shortcuts are built-in by default. See the full list of shortcuts using " + firebrickAString("/help") + ". " +
 						"You can also add your own using " + firebrickAString("/edit") + ", " + firebrickAString("/alias") + ", and " + firebrickAString("/delete") + ".<br><br>" + 
 						"To exit a display, such as this one, use the Escape key, or type " + firebrickAString("/hide") + ". You can always return to this introduction with " + firebrickAString("/intro") + ".";
 
@@ -66,7 +66,7 @@ function getHelpText(){
 	}
 	sorted = allcs.sort().join(", ");
 	return "HELP MANUAL<br><br>Valid commands will highlight " + firebrickAString("red") + " in the search bar<br>" +
-	"Type /help [command] for details of a specific command<br><br>Command list (aliases are italicized)<br><br>" + sorted + 
+	"Type /help [command] for details of a specific command<br><br>Command list<br><br>" + sorted + 
 	"<br><br>Hold Shift to force Google search<br>Hold Option to force Google \"I'm Feeling Lucky\" search" + 
 	"<br>Search multiple commands at once using a semicolon to separate them";
 }
@@ -160,7 +160,7 @@ window.onload = function() {
 	box.value = "";
 	document.onkeypress = handleEscapeKey;
 	if (storageAvailable && localStorage["intro"] == null) {
-		box.placeholder = "/intro";
+		box.placeholder = "Type /intro to learn more about the startpage";
 	}
 };
 
@@ -265,16 +265,20 @@ function parseCommand(com, keydown, inNewTab) {
 				}
 				break;
 			case "delete":
+				breakOutOfDelete = false;
 				for (var i=0; i < commands.length; i++) {
 					if (commands[i].name == comArray[1] && commands[i].iscmd == null) {
 						commands.splice(i, 1);
 						refreshCommandList();
 						log("Deleted " + comArray[1] + ". This cannot be undone.");
 						localStorage["commands"] = JSON.stringify(commands);
+						breakOutOfDelete = true;
 						break;
 					}
 				}
-				error_log("Could not find command to delete.");
+				if (!breakOutOfDelete) {
+					error_log("Could not find command to delete.");
+				}
 				break;
 			case "edit":
 				if (comArray.length < 4) {
@@ -318,7 +322,7 @@ function parseCommand(com, keydown, inNewTab) {
 			case "reset":
 				if (confirm("Are you sure you want to reset the startpage to the default state?\nYou will lose ALL custom shortcuts, aliases, and notes.\nExporting your save data before resetting is highly recommended.")) {
 					localStorage.clear();
-					box.placeholder = "/intro";
+					box.placeholder = "Type /intro to learn more about the startpage";
 					box.style.color = "black";
 				}
 				break;
